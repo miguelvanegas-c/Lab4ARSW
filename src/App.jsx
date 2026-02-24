@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { createStompClient, subscribeBlueprint } from './lib/stompClient.js'
 import { createSocket } from './lib/socketIoClient.js'
+import Search from './Search.jsx'
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:8080' // Spring
 const IO_BASE  = import.meta.env.VITE_IO_BASE  ?? 'http://localhost:3001' // Node/Socket.IO
@@ -9,6 +10,7 @@ export default function App() {
   const [tech, setTech] = useState('stomp')
   const [author, setAuthor] = useState('juan')
   const [name, setName] = useState('plano-1')
+  const [error, setError] = useState(null)
   const canvasRef = useRef(null)
 
   const stompRef = useRef(null)
@@ -16,17 +18,36 @@ export default function App() {
   const socketRef = useRef(null)
 
   useEffect(() => {
-    fetch(`${tech==='stomp'?API_BASE:IO_BASE}/api/blueprints/${author}/${name}`)
-      .then(r=>r.json())
-      .then(drawAll)
+    handleFetch(`${API_BASE}/api/v1/blueprints/${author}/${name}`)
+      
   }, [tech, author, name])
 
+  function handleFetch(url) {
+    fetch(url)
+        .then(async r => {
+        const data = await r.json()
+        return data
+        })
+        .then(resp => {
+        const bp = resp
+        if(resp.code === 404){
+            setError(resp.data)
+        } else {
+            setError(null)
+            drawAll(bp)
+        }
+        })
+    
+ }
+
   function drawAll(bp) {
+    
     const ctx = canvasRef.current?.getContext('2d')
+    
     if (!ctx) return
     ctx.clearRect(0,0,600,400)
     ctx.beginPath()
-    bp.points.forEach((p,i)=> {
+    bp.data.points.forEach((p,i)=> {
       if (i===0) ctx.moveTo(p.x,p.y); else ctx.lineTo(p.x,p.y)
     })
     ctx.stroke()
@@ -34,15 +55,15 @@ export default function App() {
 
   useEffect(() => {
     unsubRef.current?.(); unsubRef.current = null
-    stompRef.current?.deactivate?.(); stompRef.current = null
+    stompRef.current?.desactivate?.(); stompRef.current = null
     socketRef.current?.disconnect?.(); socketRef.current = null
 
     if (tech === 'stomp') {
-      const client = createStompClient(API_BASE)
+      const client = createStompClient(IO_BASE)
       stompRef.current = client
       client.onConnect = () => {
         unsubRef.current = subscribeBlueprint(client, author, name, (upd)=> {
-          drawAll({ points: upd.points })
+          drawAll({ data: { points: upd.points } })
         })
       }
       client.activate()
@@ -51,26 +72,46 @@ export default function App() {
       socketRef.current = s
       const room = `blueprints.${author}.${name}`
       s.emit('join-room', room)
-      s.on('blueprint-update', (upd)=> drawAll({ points: upd.points }))
+      s.on('blueprint-update', (upd)=> drawAll({ data: { points: upd.points } }))
     }
     return () => {
-      unsubRef.current?.(); unsubRef.current = null
-      stompRef.current?.deactivate?.()
+      unsubRef.current.unsubscribe?.(); unsubRef.current = null
+      stompRef.current?.desactivate?.()
       socketRef.current?.disconnect?.()
     }
   }, [tech, author, name])
 
-  function onClick(e) {
+  async function onClick(e) {
     const rect = e.target.getBoundingClientRect()
     const point = { x: Math.round(e.clientX - rect.left), y: Math.round(e.clientY - rect.top) }
-
+    
     if (tech === 'stomp' && stompRef.current?.connected) {
-      stompRef.current.publish({ destination: '/app/draw', body: JSON.stringify({ author, name, point }) })
+      const bp = await updatePoints(point)
+      const points = bp.data.points
+      drawAll({ data: { points } })
+      stompRef.current.publish({ destination: '/app/draw', body: JSON.stringify({ author, name, points }) })
+      
     } else if (tech === 'socketio' && socketRef.current?.connected) {
       const room = `blueprints.${author}.${name}`
       socketRef.current.emit('draw-event', { room, author, name, point })
     }
   }
+
+  async function updatePoints(point) {
+    const resp = await fetch(`${API_BASE}/api/v1/blueprints/${author}/${name}/points`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(point)
+    })
+
+    if (!resp.ok) {
+      throw new Error("Error guardando punto")
+    }
+    return await fetch(`${API_BASE}/api/v1/blueprints/${author}/${name}`)
+      .then(r => r.json())
+      
+
+}
 
   return (
     <div style={{fontFamily:'Inter, system-ui', padding:16, maxWidth:900}}>
@@ -92,6 +133,7 @@ export default function App() {
         onClick={onClick}
       />
       <p style={{opacity:.7, marginTop:8}}>Tip: abre 2 pestañas y dibuja alternando para ver la colaboración.</p>
+      {Search && <Search />}
     </div>
   )
 }
