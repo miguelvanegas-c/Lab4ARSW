@@ -112,6 +112,52 @@ export default function App() {
       
 
 }
+function crearPlano(url) {
+  fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      "author": author,
+      "name": name,
+      "points": []
+    })
+     })
+  .then(async r => {
+    if (!r.ok) {
+      const errorData = await r.json()
+      setError(errorData.message || "Error creando plano")
+      return null
+    }
+    setError(null)
+    return await r.json()
+  })
+  .then(data => {
+    if (data) drawAll(data)
+  })
+  .catch(err => {
+    setError(err.message || "Error creando plano")
+  })
+}
+function deletePlano(url) {
+  fetch(url, {
+    method: 'DELETE'
+  })
+  .then(async r => {
+    if (!r.ok) {
+      const errorData = await r.json()
+      setError(errorData.message || "Error eliminando plano")
+      return null
+    }
+    setError(null)
+    return await r.json()
+  })
+  .then(data => {
+    if (data) drawAll({ data: { points: [] } })
+  })
+  .catch(err => {
+    setError(err.message || "Error eliminando plano")
+  })
+}
 
   return (
     <div style={{fontFamily:'Inter, system-ui', padding:16, maxWidth:900}}>
@@ -124,6 +170,8 @@ export default function App() {
         </select>
         <input value={author} onChange={e=>setAuthor(e.target.value)} placeholder="autor"/>
         <input value={name} onChange={e=>setName(e.target.value)} placeholder="plano"/>
+        <button onClick={() => crearPlano(`${API_BASE}/api/v1/blueprints`)}>Crear plano</button>
+        <button onClick={() => deletePlano(`${API_BASE}/api/v1/blueprints/${author}/${name}`)}>Eliminar plano</button>
       </div>
       <canvas
         ref={canvasRef}

@@ -48,11 +48,13 @@ export default function Search() {
           {results.map(bp => (
             <li key={`${bp.author}-${bp.name}`}>
               {bp.author} - {bp.name} points:
-                <ul>
-                    {bp.points.map((p,i) => (
-                        <li key={i}>({p.x}, {p.y})</li>
-                    ))}
+              <div style={{ maxHeight: '80px', overflowY: 'auto', border: '1px solid #ccc', padding: '4px', marginTop: '4px', width: 'fit-content', background: '#f9f9f9' }}>
+                <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+                  {bp.points.map((p,i) => (
+                    <li key={i}>({p.x}, {p.y})</li>
+                  ))}
                 </ul>
+              </div>
             </li>
           ))}
         </ul>
