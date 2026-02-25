@@ -14,7 +14,7 @@ Implementar **colaboración en tiempo real** para el caso de BluePrints. El Fron
 
 ---
 
-## 🏗️ Arquitectura 
+## 🏗️ Arquitectura
 
 ![alt text](image.png)
 
@@ -99,6 +99,7 @@ En la interfaz: selecciona **Socket.IO** o **STOMP**, define `author` y `name`, 
 - **RT multi-pestaña**: con 2 pestañas, los puntos se **replican** casi en tiempo real.
   > - Este punto se evidencia completamente en el video.
 - **CRUD**: Create/Save/Delete funcionan y refrescan la lista y el **Total** del autor.
+
   > - El plano se guarda cada vez que se agrega un punto.
   > - Se agrego un boton especifico para crear y eliminar planos.
 
@@ -116,7 +117,21 @@ En la interfaz: selecciona **Socket.IO** o **STOMP**, define `author` y `name`, 
 
 ## 🛠️ Desarrollo
 
-![alt text](imgs/imag.png)
+- El desarrollo fue en dos capaz, por un lado servidores en las cuales se implementaron dos, uno que maneja el CRUD de blueprints y otro donde se maneja la interacción en tiempo real.
+
+### Server
+
+#### API REST (CRUD)
+
+- El desarrollo del crud y su explicacion esta en el siguiente repositorio: https://github.com/miguelvanegas-c/Lab3ARSW
+
+#### RT (STOMP)
+
+- El desarrollo del API RT con stomp y su explicación esta en el siguiente repositorio: https://github.com/miguelvanegas-c/Lab4ARSWStomp
+
+### Client
+
+#### FrontEnd
 
 ## 📄 Licencia
 
