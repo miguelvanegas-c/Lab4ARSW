@@ -14,7 +14,7 @@ Implementar **colaboración en tiempo real** para el caso de BluePrints. El Fron
 
 ## 🏗️ Arquitectura
 
-![alt text](image.png)
+![alt text](imgs/image.png)
 
 ---
 
