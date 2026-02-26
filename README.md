@@ -127,7 +127,11 @@ En la interfaz: selecciona **Socket.IO** o **STOMP**, define `author` y `name`, 
 - Para el desarrollo del frontend, se tomo como base el siguiente repositorio: https://github.com/DECSIS-ECI/Lab_P4_BluePrints_RealTime-Sokets
   > - Los cambios que se realizaron fueron los siguientes, primero que todo se selecciono la tecnologia que se iba a usar, y se cambiaron las URLs, para que apunte a los servidores correctos.
   >   ![alt text](image-2.png)
-  > -
+  ##### Estrategia:
+  > - El frontend cada vez que se cambia de plano, se conecta a un websocket, donde se subscriben todos los relacionados a dicho plano.
+  > - Las operaciones del CRUD las hace llamando directamente al API REST incluso cuando incierta un nuevo punto.
+  > - Al insertar un nuevo punto lanza un evento a todos los subscritores del plano, para que actualicen su vista.
+  > - Todo este funcionamiento se muestra completamente en el siguiente video: https://www.youtube.com/watch?v=3FY82fOJOK8
 
 ## 📄 Licencia
 
