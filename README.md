@@ -12,18 +12,9 @@ Implementar **colaboración en tiempo real** para el caso de BluePrints. El Fron
 
 ---
 
----
-
 ## 🏗️ Arquitectura
 
 ![alt text](image.png)
-
-**Convenciones recomendadas**
-
-- **Plano como canal/sala**: `blueprints.{author}.{name}`
-- **Payload de punto**: `{ x, y }`
-
----
 
 ---
 
@@ -132,6 +123,11 @@ En la interfaz: selecciona **Socket.IO** o **STOMP**, define `author` y `name`, 
 ### Client
 
 #### FrontEnd
+
+- Para el desarrollo del frontend, se tomo como base el siguiente repositorio: https://github.com/DECSIS-ECI/Lab_P4_BluePrints_RealTime-Sokets
+  > - Los cambios que se realizaron fueron los siguientes, primero que todo se selecciono la tecnologia que se iba a usar, y se cambiaron las URLs, para que apunte a los servidores correctos.
+  >   ![alt text](image-2.png)
+  > -
 
 ## 📄 Licencia
 

@@ -161,7 +161,7 @@ function deletePlano(url) {
 
   return (
     <div style={{fontFamily:'Inter, system-ui', padding:16, maxWidth:900}}>
-      <h2>BluePrints RT – Socket.IO vs STOMP</h2>
+      <h2>BluePrints RT STOMP</h2>
       <div style={{display:'flex', gap:8, alignItems:'center', marginBottom:8}}>
         <label>Tecnología:</label>
         <select value={tech} onChange={e=>setTech(e.target.value)}>
