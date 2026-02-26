@@ -38,7 +38,7 @@ En la UI, selecciona la tecnología en el **selector RT**.
 ### Backend RT
 
 **Opción B — STOMP (Spring Boot)**  
-Sigue el repo guía:  
+RT repo:  
 https://github.com/miguelvanegas-c/Lab4ARSWStomp
 
 ```bash
